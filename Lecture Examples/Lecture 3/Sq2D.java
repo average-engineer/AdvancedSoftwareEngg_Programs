@@ -15,7 +15,7 @@ public class Sq2D extends Rect2D{
         this.lowerLeft = lowerLeft;
         this.upperRight = upperRight;
 
-        // Since the constructor of the superclass is manually invoked into the subclass, all illegal exception handlers defined for the superclass are also defined for the subclass.
+        // Since the constructor of the superclass is manually invoked into the subclass, all illegal exception handlers defined for the superclass constructor are also defined for the subclass.
 
         // Additional illegal state -> If the sides of the sqaure are not equal
         if((this.upperRight.getX() - this.lowerLeft.getX()) != (this.upperRight.getY() - this.lowerLeft.getY())){
