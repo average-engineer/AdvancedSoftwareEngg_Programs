@@ -12,7 +12,7 @@ public class Part{
     // We want to reference each part by its Name and ID only
     public Part(String id, String Name){
         // Setting the Part names and IDs
-        setName(name);
+        setName(Name);
         setID(id);
 
         // Alternative Code:
@@ -47,6 +47,10 @@ public class Part{
         this.id = id; // id here refers to the local variable name defined by the setID methd
     }
 
-
+    // Method to overwrite the toString method
+    @Override
+    public String toString(){
+        return getName() + " [id:" + getID() + "]";
+    }
 
 }

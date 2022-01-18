@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Collections;
 
-public class PartRequirement{
+public class PartRequirementList{
 
     // Creating a private class variable which represents the map object of Part and its corresponding Part Quantity
     private Map<Part, PartQuantity> partList;
@@ -37,8 +37,8 @@ public class PartRequirement{
         // HashMap<Part, PartQuantity> partList = new HashMap<Part, PartQuantity>();
         return partList.put(part, quantity) != null; // If partList.put() is not equal to null, then true is returned and for vice versa, false is returned
         
-        // Important: if an existing Key is passed through put, then the put() method returns the value corresponding to the existing key
-        // If an entirely new key is passed through put, the the put() method returns null (which is the noral operation) and the corresponding hashmap gets modified with the new Key Value Pair
+        // Important: if a Key already existing in the Hash Map is passed through put, then the put() method returns the value corresponding to the existing key
+        // If an entirely new key is passed through put, the the put() method returns null (which is the normal operation) and the corresponding hashmap gets modified with the new Key Value Pair
 
     }
 
@@ -47,7 +47,7 @@ public class PartRequirement{
         StringBuffer buffer = new StringBuffer(); // Speacial Data Structure for handling strings
         buffer.append("Requirements of ").append(product.getName()).append(":\n");
 
-        for(Map.Entry<Part, PartQuantity> entry : partList.entrySet()){
+        for(Map.Entry<Part, PartQuantity> entry : partList.entrySet()){// Iterating through each Key Value pair in the partList hash map
             buffer.append("\t").append(entry.getValue()).append(" ").append(entry.getKey().getName()).append("\n");
         }
 

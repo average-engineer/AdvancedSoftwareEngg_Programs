@@ -20,7 +20,7 @@ public class Product extends Part{
     // Adding a Part Requirement List to our Product
     public boolean addRequirement(Part part, PartQuantity quantity){
 
-        requirement.addPartasRequirement(part,quantity);
+        return requirements.addPartasRequirement(part,quantity);
 
     }
 

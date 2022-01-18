@@ -11,7 +11,7 @@ public class PartQuantity{
     public PartQuantity(double quantity,String unitDescriptor){
 
         setQuantity(quantity);
-        setUnitDescriptor(unitDescriptor);
+        setunitDescriptor(unitDescriptor);
 
     }
 
@@ -36,6 +36,8 @@ public class PartQuantity{
     }
 
     // Overwriting the toString() method for the PartQuantity object 
+    // System.out.println(new PartQuantity(100,'g')) will give us the reference ID of the location of the PartQuantity object in the memory
+    // We want the output to be printed in human readable format (i.e. the part quantity in numbers and its unit) so we overwrite the toString() method
     public String toString(){
         return getQuantity() + (getUnitDescriptor() != null ? getUnitDescriptor() : " "); // Short Form for if else condition
 
