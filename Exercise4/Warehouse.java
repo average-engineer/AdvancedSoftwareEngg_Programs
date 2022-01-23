@@ -18,7 +18,7 @@ public class Warehouse{
     // Method to know if a certain part is available in a certain part quatity
     public boolean isAvailable(Part part, PartQuantity quantity){
         PartQuantity availableQuantity = stock.get(part); // Checking how much quantity is available for the given input part // returns the value (part quantity) corresponding to the Key (Part Object)
-        if(availableQuantity == null){ // If availableQuantity is null, then this means the part input in the method is not defined i.e. it is simply not available
+        if(availableQuantity == null){ // If availableQuantity is null, then this means the part input in the method is not defined i.e. it is simply not available in the stock map
             return false;
         }
         else{ // if the part is available (i.e. defined previously), then we need to check if the unit descriptors are compatible
@@ -29,12 +29,68 @@ public class Warehouse{
 
     }
 
+    // isAvailable method which takes a Part ID as input and checks if the part corresponding to that Part ID is available in the stock (Part->Part Quantity Map)
+    // Strategy:
+    // Function Input -> Part ID
+    // Use a entry set element to loop through all the Key Value pairs in the given Stock (Part->Part Quantity Map) of the warehouse
+    // For every entry, extract the part (value) and then extract the ID of the part (getID() method)
+    // Compare the extracted ID with the input ID, if they match, return true, otherwise return false
+
+    // ITERATION 1:
+    // Returning only boolean values to check if the part is present or not
+    // public boolean isAvailable(String id){
+
+    //     // Looping through all the KeyValue pairs in the stock of the warehouse
+    //     for(Map.Entry<Part,PartQuantity>entry : stock.entrySet()){
+    //         // Checking if the ID of each part from the stock matches with the input ID
+    //         if(entry.getKey().getID() == id){
+    //             return true;
+    //         }
+    //     }
+
+    //     return false;
+
+    // }
+
+    // ITERATION 2:
+    // // Returning the part quantity as well if the part is present in the stock -> will help us in adding the functionality of knowing how much of the part is left if its present 
+    // public PartQuantity isAvailable(String id){
+
+    //     for(Map.Entry<Part,PartQuantity>entry : stock.entrySet()){
+    //         // Checking if the ID of each part from the stock matches with the input ID
+    //         if(entry.getKey().getID() == id){
+    //             return entry.getValue(); // The value i.e. the part quantity is returned
+    //         }
+    //     }
+
+    //     return null; // null is returned if the part id doesnt match
+
+    // }
+
+    
+    // ITERATION 3:
+    // Returns the Part object if the part corresponding to the ID is present 
+    public Part isAvailable(String id){
+
+        for(Map.Entry<Part,PartQuantity>entry : stock.entrySet()){
+            // Checking if the ID of each part from the stock matches with the input ID
+            if(entry.getKey().getID() == id){
+                return entry.getKey(); // The value i.e. the part quantity is returned
+            }
+        }
+
+        return null; // null is returned if the part id doesnt match
+
+    }
+
+
     // isAvailable method which takes a hash map (Part:PartQuantity) as input
     public boolean isAvailable(Map<Part,PartQuantity> partList){
 
         for(Map.Entry<Part,PartQuantity> entry: partList.entrySet()){
             if(!isAvailable(entry.getKey(), entry.getValue())){ // if the part is not available (i.e. isAvailablw returns false)
                 return false; // If anyone of the parts in the part list becomes unavailabe, the function returns false
+                              // Basically even if one of the parts are missing/finished, the function returns false instead of true
             }
         }
 
@@ -104,12 +160,19 @@ public class Warehouse{
         }
     }
 
+    // Method to extract/get the stock of the warehouse
+    public Map<Part,PartQuantity> getStock(){
+        return stock;
+    }
+
     // Overwriting the toString method (to control what is printed to the screem when the Warehouse object is printed)
     // Default -> It will print the reference ID of the warehouse object location in the memory
     public String toString(){
         StringBuffer buffer = new StringBuffer(); // new StringBuffer object
         buffer.append("The warehouse contains: \n");
         for(Map.Entry<Part,PartQuantity> entries: stock.entrySet()){
+
+            // Printed output -> toString() of PartQuanitity <space> toString() of Part
             buffer.append("\t").append(entries.getValue()).append(" ").append(entries.getKey()).append("\n");
         }
 
