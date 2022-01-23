@@ -2,7 +2,7 @@
 
 
 import java.io.File;
-import java.util.Map;
+//import java.util.Map;
 
 public class Ex4T1d {
     
@@ -18,7 +18,7 @@ public class Ex4T1d {
         // We want to find a product in our entire part base with a particular ID
 
         // Product ID
-        String prodID = "75095-1";
+        String prodID = "75086-1";
 
         Product product = (Product) base.find(prodID); // Returns the Part/Product corresponding to the id 30496-1
         // find() method returns a Part object
@@ -26,7 +26,7 @@ public class Ex4T1d {
         // We can solve this using explicit typecasting
         // Product product = (Product) base.find("30496-1")
 
-        System.out.println(product.getRequirements());
+        
 
 
         // Poupulating a warehouse object from the warehouse_stock.csv file
@@ -34,40 +34,84 @@ public class Ex4T1d {
         Warehouse wH = new Warehouse();
 
         // Directory of the folder where the csv file is contained
+        // The warehouse stock is poupulated here
         String dir = "./warehouse_files";
 
         // Invoking the Warehouse csv file reader object
         new WarehouseCsvReader().addFolderToWH(wH,new File(dir));
 
+        //**************************************************************************************************************** */
+        // DEBUGGING CODE -> Start
+
+        // if(wH.isAvailable("4212008") == null){
+        //     System.out.println("This part is not present");
+        // }
+
+        // int count1 = 0;
+        // String var1 = null;
+
+        // for(Map.Entry<Part, PartQuantity> entry : wH.getStock().entrySet()){
+        //     System.out.print(entry.getKey().getID());
+        //     if(wH.isAvailable(entry.getKey().getID()) != null){
+        //         System.out.println("\t This part is available");
+        //     }
+        //     count1 = count1 + 1;
+        //     if(count1 == 2 ){
+        //         var1 = entry.getKey().getID();
+        //     }
+        // }
+        // System.out.println(var1);
+        // if(var1.equals("4645730")){
+        //     System.out.println("yes");
+        // }
+        // else{
+        //     System.out.println("no");
+        // }
+
+        // int count2 = 0;
+        // for(Map.Entry<Part, PartQuantity> entries : product.getRequirements().getPartList().entrySet()){
+        //     // System.out.print(entries.getKey().getID());
+        //     // if(wH.isAvailable(entries.getKey().getID()) == null){
+        //     //     System.out.println("\t This part is not available");
+        //     // }
+        //     count2 = count2 + 1;
+        //     if(entries.getKey().getID().equals("4528323")){
+        //         String var2 = entries.getKey().getID();
+        //         System.out.println(var2);
+        //     }
+
+        // }
+
+        // DEBUGGING CODE -> End
+        //***************************************************************************************************************** */
+
+        
+
+
 
         // STRATEGY:
-        // Loop through all the Part->PartQuantity maps in the part requirement list of the product
-        // For each iteration, get the PartID of the part and the corresponding required quantity
-        // Check if the part corresponding to the extracted ID is existing in the Warehouse stock using isAvailable(partID) method
-        // If it is available, stock out the part in the required quantity from the warehouse stock -> if it is not available, then the entire loop breaks since 
-        // now the product can't be made anymore
+        // Run a loop while any one of the parts in the part requirement list of the product are available (in sufficient amount) in the stock of the warehouse
+        // The loop should stop as soon as the available quantity is less than the required quantity for the part in the product part list
+        // Input the part requirement list of the product into the isAvailable(partList) method of the Warehouse object
+        // Inside the loop, keep stocking out the required parts from the stock using the stockOut(partList) where the input
+        // is the partList of the product
 
+        // Variable for counting the number of products which can be made
         int productNum = 0;
 
-        for(Map.Entry<Part,PartQuantity> entry : product.getRequirements().getPartList().entrySet()){
-
-            // Variable for counting the number of products which can be made
-            
-            // for each part in the part requirement list, checing if the part is available in the warehouse stock
-            if(wH.isAvailable(entry.getKey().getID()) == null){
-                break; // The for loop is broken since the product can't be made anymore
-            }
-
-            else{
-                // Stocking out the part with the required quantity
-                wH.stockOut(wH.isAvailable(entry.getKey().getID()), entry.getValue());
-
-                System.out.println("Stocking Out");
-                productNum = productNum + 1;
-            }
+        while(wH.isAvailable(product.getRequirements().getPartList())){// While all the required parts for the product are available in the stock
+            // Stocking out all the required parts (and the required quantities) from the warehouse stock
+            // For each iteration of the while loop (and for one whole for loop in each while loop iteration)
+            // One single product will be made by stocking out therequired parts from the warehouse stock
+            wH.stockOut(product.getRequirements().getPartList());
+            System.out.println("Stocking out the parts and creating 1 " + product.getName());
+            productNum = productNum + 1;
         }
-        System.out.println("The number of " + product.getName() + " which can be produced with the given warehouse stock are: " + productNum);
 
+        System.out.println("The number of " + product.getName() + " which can be produced with the given warehouse stock are: " + productNum);
+        System.out.println("*********************************************************");
+        // System.out.println("The modified warehouse stock is given by:");
+        // System.out.println(wH);
 
     }
 }

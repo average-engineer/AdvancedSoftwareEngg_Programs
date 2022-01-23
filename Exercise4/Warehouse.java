@@ -16,6 +16,9 @@ public class Warehouse{
     }
 
     // Method to know if a certain part is available in a certain part quatity
+    // Availability is defined by 2 metrics:
+    // -> If the part is existing in the stock
+    // -> If the part quantity is more than the required quantity to be stocked out
     public boolean isAvailable(Part part, PartQuantity quantity){
         PartQuantity availableQuantity = stock.get(part); // Checking how much quantity is available for the given input part // returns the value (part quantity) corresponding to the Key (Part Object)
         if(availableQuantity == null){ // If availableQuantity is null, then this means the part input in the method is not defined i.e. it is simply not available in the stock map
@@ -25,6 +28,8 @@ public class Warehouse{
             checkCompatibleUnitDescriptors(availableQuantity, quantity); // Private method for checking compatibility of unit descriptors of part quantities
             return availableQuantity.getQuantity() >= quantity.getQuantity();
             // Tells us if the available quantity is more than the required quantity or not (True/False)
+            // If false is returned, then this means that the amount present in the warehouse stock is less than the required amount
+            // Consequently, if false is returned, the stockOut(Part,PartQuantity) method will throw an UnsupportedOperationException 
         }
 
     }
@@ -43,7 +48,7 @@ public class Warehouse{
     //     // Looping through all the KeyValue pairs in the stock of the warehouse
     //     for(Map.Entry<Part,PartQuantity>entry : stock.entrySet()){
     //         // Checking if the ID of each part from the stock matches with the input ID
-    //         if(entry.getKey().getID() == id){
+    //         if(entry.getKey().getID().equals(id)){
     //             return true;
     //         }
     //     }
@@ -54,28 +59,12 @@ public class Warehouse{
 
     // ITERATION 2:
     // // Returning the part quantity as well if the part is present in the stock -> will help us in adding the functionality of knowing how much of the part is left if its present 
-    // public PartQuantity isAvailable(String id){
-
-    //     for(Map.Entry<Part,PartQuantity>entry : stock.entrySet()){
-    //         // Checking if the ID of each part from the stock matches with the input ID
-    //         if(entry.getKey().getID() == id){
-    //             return entry.getValue(); // The value i.e. the part quantity is returned
-    //         }
-    //     }
-
-    //     return null; // null is returned if the part id doesnt match
-
-    // }
-
-    
-    // ITERATION 3:
-    // Returns the Part object if the part corresponding to the ID is present 
-    public Part isAvailable(String id){
+    public PartQuantity isAvailable(String id){
 
         for(Map.Entry<Part,PartQuantity>entry : stock.entrySet()){
             // Checking if the ID of each part from the stock matches with the input ID
-            if(entry.getKey().getID() == id){
-                return entry.getKey(); // The value i.e. the part quantity is returned
+            if(entry.getKey().getID().equals(id)){
+                return entry.getValue(); // The value i.e. the part quantity is returned
             }
         }
 
@@ -83,18 +72,48 @@ public class Warehouse{
 
     }
 
+    
+    // ITERATION 3:
+    // Returns the Part object if the part corresponding to the ID is present 
+    // public Part isAvailable(String id){
+
+    //     for(Map.Entry<Part,PartQuantity>entry : stock.entrySet()){
+    //         // Checking if the ID of each part from the stock matches with the input ID
+    //         if(entry.getKey().getID().equals(id)){
+    //             return entry.getKey(); // The value i.e. the part quantity is returned
+    //         }
+    //     }
+
+    //     return null; // null is returned if the part id doesnt match
+
+    // }
+
 
     // isAvailable method which takes a hash map (Part:PartQuantity) as input
     public boolean isAvailable(Map<Part,PartQuantity> partList){
 
         for(Map.Entry<Part,PartQuantity> entry: partList.entrySet()){
-            if(!isAvailable(entry.getKey(), entry.getValue())){ // if the part is not available (i.e. isAvailablw returns false)
+
+            // Looping through each part in the part list
+
+            // Using isAvailable(Part,Quantity)
+            // if(!isAvailable(entry.getKey(), entry.getValue())){ // if the part is not available (it is less than the required quantity) (i.e. isAvailablw returns false)
+            //     return false; // If anyone of the parts in the part list becomes unavailabe, the function returns false
+            //                   // Basically even if one of the parts are missing/finished, the function returns false instead of true
+            // }
+
+            // Using isAvailable(partID)
+            // We need to compare the required part quantity and part quantity in the stock
+            // isAvailable(partID) will return the available part quantity in the warehouse stock
+            // entry.getValue() will return the required part quantity according to the product partlist
+            if(isAvailable(entry.getKey().getID()) == null || entry.getValue().getQuantity() > isAvailable(entry.getKey().getID()).getQuantity()){ 
+                // If the part is not available in the stock or is available but present in less quantity than the required quantity
                 return false; // If anyone of the parts in the part list becomes unavailabe, the function returns false
-                              // Basically even if one of the parts are missing/finished, the function returns false instead of true
+                              // Basically even if one of the parts are missing/insufficient, the function returns false instead of true
             }
         }
 
-        // If everything (all parts in the part list) is avaialble
+        // If everything (all parts in the part list) is avaialble/sufficient
         return true;
 
     }
@@ -138,14 +157,22 @@ public class Warehouse{
         // Checking if the specified part is available in the stock or not
         // If the part is not available, there is no reason to stock out
         // Using the isAvailable method to check if the part is available
+
+        // Using isAvailable(part,quantity)
         // If the part is not available, isAvailable throws a false value -> !isAvailable(part, quantity) will give a True value if the part is not available
-        if(!isAvailable(part,quantity)){
+        // if(!isAvailable(part,quantity)){
+        //     throw new UnsupportedOperationException("Can not stock out "+ part.getName() + " due to insufficient quantity");
+        // }
+
+        // Using isAvailable(partID)
+        if(isAvailable(part.getID()).getQuantity() < quantity.getQuantity()){
             throw new UnsupportedOperationException("Can not stock out "+ part.getName() + " due to insufficient quantity");
         }
 
         else{// if the part is available
-            PartQuantity availableQuantity = stock.get(part);
-            double newQuantity = availableQuantity.getQuantity() - quantity.getQuantity(); // Stocking out the given quantity
+            //PartQuantity availableQuantity = stock.get(part);
+            PartQuantity availableQuantity = isAvailable(part.getID()); // Initial available quantity before stocking out
+            double newQuantity = availableQuantity.getQuantity() - quantity.getQuantity(); // Available quantity in the stock after stocking out
             availableQuantity.setQuantity(newQuantity); // Setting the reduced quantity as the new quantity value corresponding to the part key in the stock hashmap
         }
 

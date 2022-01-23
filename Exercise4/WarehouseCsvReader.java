@@ -76,26 +76,26 @@ public class WarehouseCsvReader extends AbstractCsvReader {
             // the isAvailable(partID) method of the Warehouse object is used
             // If the part corresponding to the part ID is not present then null is returned
             // Part Quantity object is returned by the isAvailable(partID) method
-            // PartQuantity availableQuantity = wH.isAvailable(id);
+            PartQuantity availableQuantity = wH.isAvailable(id);
 
-            // if(availableQuantity == null){ // ie the part is not yet in the warehouse stock
-            //     Part part = new Part(id,"PART " + count); // The part name is artificially created
-            //     // Add the new part to the existing warehouse stock
-            //     wH.stockIn(part, new PartQuantity(quantity,"Pcs"));
-            // }
+            if(availableQuantity == null){ // ie the part is not yet in the warehouse stock
+                Part part = new Part(id,"PART " + count); // The part name is artificially created
+                // Add the new part to the existing warehouse stock
+                wH.stockIn(part, new PartQuantity(quantity,"pieces"));
+            }
 
             // ITERATION 3: Corresponding to ITERATION 2 of the isAvailable(id) method of Warehouse
-            // Finding the part cooresponding to the extracted id in our existing stock of the warehouse
+            // Finding the part corresponding to the extracted id in our existing stock of the warehouse
             // the isAvailable(partID) method of the Warehouse object is used
             // If the part corresponding to the part ID is not present then null is returned
             // Part object is returned by the isAvailable(partID) method
-            Part placeHolderPart = wH.isAvailable(id);
+            // Part placeHolderPart = wH.isAvailable(id);
 
-            if(placeHolderPart == null){ // ie the part is not yet in the warehouse stock
-                Part part = new Part(id,"PART " + count); // The part name is artificially created
-                // Add the new part to the existing warehouse stock
-                wH.stockIn(part, new PartQuantity(quantity,"Pcs"));
-            }
+            // if(placeHolderPart == null){ // ie the part is not yet in the warehouse stock
+            //     Part part = new Part(id,"PART " + count); // The part name is artificially created
+            //     // Add the new part to the existing warehouse stock
+            //     wH.stockIn(part, new PartQuantity(quantity,"pieces"));
+            // }
 
 
             count = count + 1;

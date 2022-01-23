@@ -36,10 +36,16 @@ public class Ex4T1a {
 
         // ITERATION 2:
         // isAvilable(id) method of Warehouse object returns the part quantity of the matching part if the ID matches or null if there is no ID match
-        // if(wH.isAvailable(checkID) != null){
-        //     System.out.println("The part with the ID "+checkID+" is present in the stock currently.");
-        //     System.out.println("The quantity of the part in the current stock is: "+wH.isAvailable(checkID).getQuantity() + " "+wH.isAvailable(checkID).getUnitDescriptor());
-        // }
+        if(wH.isAvailable(checkID) != null){
+            System.out.println("The part with the ID "+checkID+" is present in the stock currently.");
+            System.out.println("The quantity of the part in the current stock is: "+wH.isAvailable(checkID).getQuantity() + " "+wH.isAvailable(checkID).getUnitDescriptor());
+        }
+
+        // Stocking out a part with a required part quantity
+        Part part = new Part("101","Part1");
+        System.out.println("The quantity of part 1 in the stock before stocking out is: " + wH.isAvailable("101"));
+        wH.stockOut(part, new PartQuantity(4, "Grams"));
+        System.out.println("The quantity of part 1 in the stock before stocking out is: " + wH.isAvailable("101"));
 
         // else{
         //     System.out.println("The part with the ID "+checkID+" is not present in the stock currently.");
@@ -47,9 +53,9 @@ public class Ex4T1a {
 
         // ITERATION 3:
         // isAvailable(id) method of Warehouse object returns the Part Object of the matching part if the ID matches or null if there is no ID match
-        if(wH.isAvailable(checkID) != null){
-                System.out.println("The part (" + wH.isAvailable(checkID).getName() + ") with the ID "+checkID+" is present in the stock currently.");
-            }
+        // if(wH.isAvailable(checkID) != null){
+        //         System.out.println("The part (" + wH.isAvailable(checkID).getName() + ") with the ID "+checkID+" is present in the stock currently.");
+        //     }
 
 
         
