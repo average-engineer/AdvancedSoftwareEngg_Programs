@@ -11,6 +11,8 @@ public class TicTacToe {
 
     private String diff; // Difficulty of the tic tac toe game as choosen by the player
 
+    private Scanner playerIP = new Scanner(System.in); // Variable for taking player input
+
     // Method to initialise the grid on the console
     public void initialiseGrid(){
 
@@ -36,7 +38,7 @@ public class TicTacToe {
     // Game initiliasation
     public void gameStart(){
         System.out.println("Shall we play a game?");
-        Scanner playerIP = new Scanner(System.in);
+        // Scanner playerIP = new Scanner(System.in);
         String ans = playerIP.next();
 
         if(ans.equals("yes")){
@@ -56,17 +58,173 @@ public class TicTacToe {
 
         // Starting the game by initialising the grid
         System.out.println("Starting the game");
-        for(int i = 0; i < 10; i++){
-            System.out.println("Creating the grid: "+ (10*i) + "%");
-
-        }
+        System.out.println("Creating the Grid:");
         initialiseGrid();
-        System.out.println("Player make your move:");
 
+        // GAMEPLAY:
+        // Human player plays first and then the computer for every round
+        // Max number of times human player can play -> 5
+        // Max number of times computer can play -> 4
+        // One Round -> Human and Computer play once each
+        // Each round can be represented by a loop which can terminate when the game ends
+
+        // WHEN DOES THE GAME END?
+        // Situation 1: Either Human player or computer wins
+        // Situation 2: There is no remaining valid (empty) space in the playing grid
+
+        // Checking for situation 1:
+        // We have to keep track of every X and O being played on the grid
+        // Minimum number of times a player has to play in order to win -> 3
+        // If a player has won, the grid positions they have populated will have 0,1,2 for rows and/or columns
+
+
+        // Checking for situation 2:
+        // A counter variable which updates everytime a blank field in the grid is encountered
+        // If counter = 0 after all fields have been checked, then there are no more blank fields and the match is over
+
+
+        // The loop will go on as long as no player has won the game and there are valid fields still available on the grid
+        // The loop ends as soon as one of the player wins or there is no valid fields left
+        while((!checkWin("Human"))&&(!checkWin("Computer"))&&validFieldsAvailable()){
+            // Each round begins with te computer asking the player to make a move
+            System.out.println("Player make your move:");
+            // Taking the player input
+            // Scanner playerIP = new Scanner(System.in);
+            String humanIP = playerIP.next();
+            // The grid is modfified according to the human input
+            modifyGrid(humanIP, "Human");
+
+            // Now the computer plays
+            System.out.println("Now the Computer will make a move");
+            computerPlay();
+        }
+
+        // Once the loop ends, we have to flash a message based on who wins or if it is a tie
+
+        // If the human wins
+        if(checkWin("Human")){
+            System.out.println("Congratulations, you win!");
+        }
+
+        // If the computer wins
+        else if(checkWin("Computer")){
+            System.out.println("Sorry, you lose!");
+        }
+
+        // If the game is a tie
+        // No valid fields are avalilable and there is no winner
+        else if(!validFieldsAvailable()){
+            System.out.println("A STRANGE GAME");
+            System.out.println("THE ONLY WINNING MOVE IS NOT TO PLAY");
+        }
+
+        // Then the game reloops and we are at the start again: Shall we play a game?
+        gameStart();
 
     }
 
 
+
+    // Method to check for a possible winner
+    // Checks for a particular player (can be a Human or the Computer)
+    // Returns true if the player has won
+    // Input Parameter -> Player Type (Human or Computer)
+    public boolean checkWin(String player){
+
+        // Strings for storing the row and column 
+        String rowStr = "";
+        String colStr = "";
+        // Looping over the entire grid
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+
+                // Checking the populated grids based on the Player type
+                if(player.equals("Human")){
+                    if(grid[i][j].equals(" X ")){
+                        rowStr = rowStr.concat(String.valueOf(i));
+                        colStr = colStr.concat(String.valueOf(j));
+                    }
+                }
+
+                else if(player.equals("Computer")){
+                    if(grid[i][j].equals(" O ")){
+                        rowStr = rowStr.concat(String.valueOf(i));
+                        colStr = colStr.concat(String.valueOf(j));
+                    }
+                }
+            }
+        }
+
+        // Boolean conditions
+        // Row string contains all 0,1,2
+        boolean rowStrAll = rowStr.contains("0")&&rowStr.contains("1")&&rowStr.contains("2");
+        // Column string contains all 0,1,2
+        boolean colStrAll = colStr.contains("0")&&colStr.contains("1")&&colStr.contains("2");
+
+        // Row string contains only 0
+        boolean rowStr0 = rowStr.contains("0")&&(!rowStr.contains("1"))&&(!rowStr.contains("2"));
+        // Row string contains only 1
+        boolean rowStr1 = rowStr.contains("1")&&(!rowStr.contains("0"))&&(!rowStr.contains("2"));
+        // Row string contains only 2
+        boolean rowStr2 = rowStr.contains("2")&&(!rowStr.contains("1"))&&(!rowStr.contains("0"));
+
+        // Column string contains only 0
+        boolean colStr0 = colStr.contains("0")&&(!colStr.contains("1"))&&(!colStr.contains("2"));
+        // Column string contains only 1
+        boolean colStr1 = colStr.contains("1")&&(!colStr.contains("0"))&&(!colStr.contains("2"));
+        // Column string contains only 2
+        boolean colStr2 = colStr.contains("2")&&(!colStr.contains("1"))&&(!colStr.contains("0"));
+
+        
+        // WINNING CONDITIONS
+        
+        // Condition for straight row win
+        // Row remains constant (0,1 or 2) and column string has all 3 (0,1, and 2)
+        boolean stRowWin = (rowStr0||rowStr1||rowStr2)&&colStrAll;
+
+        // Condition for straight col win
+        // Column remains constant (0,1 or 2) and row string has all 3 (0,1, and 2)
+        boolean stColWin = (colStr0||colStr1||colStr2)&&rowStrAll;
+
+        // Condition for diagonal win
+        // Both column and row string contain all 3 (0,1,2)
+        // In order to maintain the order, rowStr == colStr
+        boolean diagWin = rowStrAll&&colStrAll&&(rowStr.equals(colStr));
+
+        // WINNING CONDITIONS
+
+        if(stRowWin||stColWin||diagWin){
+            return true;
+        }
+
+        return false;
+
+    }
+
+
+    // Method to check if the game has no more valid fields left 
+    // Returns true if valid fields are left
+    public boolean validFieldsAvailable(){
+
+
+        // Counter variable for keeping track of valid fields
+        int count = 0;
+        // Looping over the entire grid and checking if any valid fields are there
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if((!grid[i][j].equals(" X ")) && (!grid[i][j].equals(" O "))){ // Condition for a valid field
+                    count = count + 1; // Updating the counter variable
+                }
+            }
+        }
+
+        // If the counter variable hasn't updated, then there are no valid fields left
+        if(count == 0){
+            return false;
+        }
+
+        return true;
+    }
 
 
 
@@ -165,7 +323,7 @@ public class TicTacToe {
     // EASY or HARD
     // This method also makes the player input the difficulty level and interprets it as a string
     public void setDifficulty(){
-        Scanner playerIP = new Scanner(System.in);
+        // Scanner playerIP = new Scanner(System.in);
         System.out.println("Choose Difficulty:");
         this.diff = playerIP.next(); // Setting the dificulty level
     }
