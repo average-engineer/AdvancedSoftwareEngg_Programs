@@ -8,7 +8,7 @@ public class Hotel {
     // Array List to store the rooms
     private ArrayList<Room> roomList = new ArrayList<>();
     // H Map -> Key: Employee, Value: Salary
-    private HashMap<Employee,Integer> employeeList = new HashMap<>();
+    private HashMap<Employee,Integer> employeeList = new HashMap<>(); // Employees can be a simple array list too
 
 
 
